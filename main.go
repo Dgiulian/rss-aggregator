@@ -61,6 +61,7 @@ func main() {
 	v1Router.Get("/err", handlerErr)
 	v1Router.Get("/err", handlerErr)
 	v1Router.Post("/user", apiCfg.handlerCreateUser)
+	v1Router.Get("/user", apiCfg.handleGetUserByApiKey)
 	router.Mount("/v1", v1Router)
 
 	fmt.Printf("Server started on port %v\n", portString)
