@@ -1,0 +1,26 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ajPgC7yvZo0g2gwr
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+
+# goose postgres postgres://postgres:ajPgC7yvZo0g2gwr@db:5432/rssaggregator up      
+
+#http://[::]:8080/?pgsql=db
+#username=postgres
+#db=rssaggregator
+#ns=public
