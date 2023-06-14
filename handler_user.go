@@ -49,6 +49,6 @@ func (apiCfg *apiConfig) handleGetPosts(w http.ResponseWriter, r *http.Request, 
 		respondWithError(w, 500, "could not get the posts for the user")
 		return
 	}
-	respondWithJSON(w, 200, posts)
+	respondWithJSON(w, 200, databasePostsToPosts(posts))
 
 }

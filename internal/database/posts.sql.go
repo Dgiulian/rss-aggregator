@@ -95,37 +95,21 @@ func (q *Queries) GetFeedPosts(ctx context.Context, feedID uuid.UUID) ([]Post, e
 
 const getPostsForUser = `-- name: GetPostsForUser :many
 
-SELECT posts.id, posts.created_at, posts.updated_at, title, description, published_at, url, posts.feed_id, feeds_follows.id, feeds_follows.created_at, feeds_follows.updated_at, user_id, feeds_follows.feed_id 
+SELECT posts.id, posts.created_at, posts.updated_at, posts.title, posts.description, posts.published_at, posts.url, posts.feed_id 
 FROM posts 
 JOIN  feeds_follows on posts.feed_id = feeds_follows.feed_id 
 WHERE user_id = $1
 `
 
-type GetPostsForUserRow struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	Title       string
-	Description sql.NullString
-	PublishedAt time.Time
-	Url         string
-	FeedID      uuid.UUID
-	ID_2        uuid.UUID
-	CreatedAt_2 time.Time
-	UpdatedAt_2 time.Time
-	UserID      uuid.UUID
-	FeedID_2    uuid.UUID
-}
-
-func (q *Queries) GetPostsForUser(ctx context.Context, userID uuid.UUID) ([]GetPostsForUserRow, error) {
+func (q *Queries) GetPostsForUser(ctx context.Context, userID uuid.UUID) ([]Post, error) {
 	rows, err := q.db.QueryContext(ctx, getPostsForUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetPostsForUserRow
+	var items []Post
 	for rows.Next() {
-		var i GetPostsForUserRow
+		var i Post
 		if err := rows.Scan(
 			&i.ID,
 			&i.CreatedAt,
@@ -135,11 +119,6 @@ func (q *Queries) GetPostsForUser(ctx context.Context, userID uuid.UUID) ([]GetP
 			&i.PublishedAt,
 			&i.Url,
 			&i.FeedID,
-			&i.ID_2,
-			&i.CreatedAt_2,
-			&i.UpdatedAt_2,
-			&i.UserID,
-			&i.FeedID_2,
 		); err != nil {
 			return nil, err
 		}
