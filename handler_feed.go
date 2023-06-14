@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/giulian/rssaggregator/internal/database"
+	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 )
 
@@ -50,4 +51,20 @@ func (apiCfg *apiConfig) handleGetFeeds(w http.ResponseWriter, r *http.Request) 
 
 	respondWithJSON(w, 200, databaseFeedsToFeeds(feeds))
 
+}
+
+func (apiCfg *apiConfig) handlerDeleteFeed(w http.ResponseWriter, r *http.Request) {
+	feedId, err := uuid.Parse(chi.URLParam(r, "feedId"))
+	if err != nil {
+		respondWithError(w, 400, "feed Id not found")
+		return
+	}
+
+	feed, err := apiCfg.DB.DeleteFeed(r.Context(), feedId)
+	if err != nil {
+		respondWithError(w, 400, "feed Id not found")
+		return
+	}
+
+	respondWithJSON(w, 200, feed)
 }
