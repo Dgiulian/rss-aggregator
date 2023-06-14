@@ -66,7 +66,9 @@ func main() {
 	v1Router.Post("/feed", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
 	v1Router.Get("/feeds", apiCfg.handleGetFeeds)
 
-	v1Router.Post("/feed_follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
+	v1Router.Get("/user/follows", apiCfg.middlewareAuth(apiCfg.handlerGetFeedFollow))
+	v1Router.Post("/user/follows", apiCfg.middlewareAuth(apiCfg.handlerCreateFeedFollow))
+
 	router.Mount("/v1", v1Router)
 
 	fmt.Printf("Server started on port %v\n", portString)

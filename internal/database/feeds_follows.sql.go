@@ -44,3 +44,39 @@ func (q *Queries) FollowFeed(ctx context.Context, arg FollowFeedParams) (FeedsFo
 	)
 	return i, err
 }
+
+const getFollowFeed = `-- name: GetFollowFeed :many
+
+SELECT id, created_at, updated_at, user_id, feed_id  
+FROM feeds_follows
+WHERE feeds_follows.user_id = $1
+`
+
+func (q *Queries) GetFollowFeed(ctx context.Context, userID uuid.UUID) ([]FeedsFollow, error) {
+	rows, err := q.db.QueryContext(ctx, getFollowFeed, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FeedsFollow
+	for rows.Next() {
+		var i FeedsFollow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.UserID,
+			&i.FeedID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
