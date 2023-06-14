@@ -13,5 +13,7 @@ SELECT * FROM posts WHERE feed_id = $1;
 
 SELECT posts.* 
 FROM posts 
-JOIN  feeds_follows on posts.feed_id = feeds_follows.feed_id 
-WHERE user_id = $1;
+JOIN  feeds_follows on feeds_follows.feed_id = posts.feed_id
+WHERE user_id = $1
+ORDER BY posts.published_at DESC
+LIMIT $2;

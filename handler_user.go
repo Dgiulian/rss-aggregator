@@ -44,7 +44,10 @@ func (apiCfg *apiConfig) handleGetUser(w http.ResponseWriter, r *http.Request, u
 
 func (apiCfg *apiConfig) handleGetPosts(w http.ResponseWriter, r *http.Request, user database.User) {
 
-	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), user.ID)
+	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  10,
+	})
 	if err != nil {
 		respondWithError(w, 500, "could not get the posts for the user")
 		return
