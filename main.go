@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/giulian/rssaggregator/internal/database"
 	"github.com/go-chi/chi"
@@ -37,10 +38,14 @@ func main() {
 		log.Fatal("Cannot connect to Database")
 	}
 
+	db := database.New(conn)
 	apiCfg := apiConfig{
-		DB: database.New(conn),
+		DB: db,
 	}
 
+	// `rssFeed` is a variable that is being assigned the result of the `urlToFeed` function, which is
+	// expected to return an RSS feed parsed from the URL provided in the `feed` parameter. The contents
+	// of the `rssFeed` variable are not used in the provided code snippet.
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -55,6 +60,8 @@ func main() {
 		Handler: router,
 		Addr:    ":" + portString,
 	}
+
+	go startScrapping(db, 10, 1*time.Minute)
 
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthz", handlerReadiness)
